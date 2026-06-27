@@ -1,0 +1,519 @@
+/**
+*@fileoverview Hoja de estilos principal para la BiblioTech.
+*Implementa un sistema de diseño basado en CSS Custom Properties (Variables)
+*Para soportar tematización dinámica (Modo Claro /Oscuro), efectos de Glassmorphism
+*y un diseño completamente responsivo (Mobile-First adaptado).
+*/
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+/* ==========================================
+   1. VARIABLES (MODO OSCURO POR DEFECTO)
+========================================== */
+/**
+*Se define la paleta de colores base en la pseudoclase :root.
+*Esto permite que todo el sitio consuma estas variables, facilitando
+*el mantenimiento y la transición entre temas sin reescribir clases.
+*/
+:root {
+    --color-1: rgb(128, 0, 128); /* Púrpura */
+    --color-2: rgb(128, 0, 64);  /* Magenta oscuro */
+    --color-3: rgb(128, 0, 0);   /* Vino */
+
+    --bg-main: #0f0a0f;          
+    --bg-card: #181118;          
+    --bg-nav: rgba(15, 10, 15, 0.95);
+    
+    --accent-gold: #d4af37;      
+    --text-light: #fdfafb;
+    --text-muted: #a6949a;
+    --border-color: rgba(212, 175, 55, 0.3); 
+
+    /* VARIABLES DINÁMICAS PARA EL FONDO DEL HERO EN MODO OSCURO */
+    --hero-bg-full: url('Imagenes/Pagina/burrito_dark.jpg'); 
+    --hero-overlay: rgba(0,0,0,0.6); 
+}
+
+/* ==========================================
+   2. VARIABLES (MODO CLARO)
+========================================== */
+/**
+*Al inyectar la clase .light-mode en el body desde JavaScript,
+*estas variables sobrescriben a las de :root, cambiando el tema
+*de todo el sitio instantáneamente mediante cascada.
+*/
+body.light-mode {
+    --bg-main: #fcfcfc;          
+    --bg-card: #ffffff;          
+    --bg-nav: rgba(255, 255, 255, 0.95);
+    
+    --accent-gold: #8b6508;    /* Dorado más oscuro para mantener el constraste sobre fondo blanco */  
+    --text-light: #1a1a1a;     /* Texto casi negro para legibilidad */
+    --text-muted: #666666;
+    --border-color: rgba(128, 0, 128, 0.2);  /* Bordes con tono púrpura sutil */
+
+    /* VARIABLES DINÁMICAS PARA EL FONDO DEL HERO EN MODO CLARO */
+    --hero-bg-full: url('Imagenes/Pagina/burrito_light.jpg'); 
+    --hero-overlay: rgba(255,255,255,0.7); 
+}
+
+/* ==========================================
+   3. ESTILOS GLOBALES
+========================================== */
+/**
+*Reseteo básico del modelo de caja y tipografía base.
+*Se aplican transiciones globlaes para que el cambio de tema sea suave.
+*/
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-main); 
+    color: var(--text-light);
+    line-height: 1.6;
+    overflow-x: hidden;  /* Evita scroll horizontal no deseado */
+}
+
+h1, h2, h3, h4, .logo {
+    font-family: 'Playfair Display', serif;  /* Tipogragia serif para dar aspecto clásifo/académico */
+}
+
+/* ==========================================
+   4. NAVBAR Y LOGO
+========================================== */
+/**
+*La barra de navegación utiliza Flexbox para distribuir sus elementos.
+*Se emplea position: sticky para mantenerla visible al hacer scroll
+*y backdrop-filter para el efecto de Glassmorphism (cristal esmerilado).
+*/
+.navbar {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 15px 5%; 
+    background: var(--bg-nav);
+    backdrop-filter: blur(10px); 
+    border-bottom: 1px solid var(--border-color);
+    position: sticky; 
+    top: 0; 
+    z-index: 100; /* Asegura que la navbar se mantenga sobre el resto del contenido */
+}
+
+.logo { 
+    font-size: 1.8rem; 
+    font-weight: 700; 
+    color: var(--accent-gold); 
+    text-decoration: none; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+.logo span { color: var(--text-light); }
+
+.logo-icon {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+   /* Filtro matemático para convertir el logo original a un tono dorado/sepia que este adaptado al tema */
+    filter: invert(70%) sepia(40%) saturate(600%) hue-rotate(350deg) brightness(95%) contrast(90%); 
+}
+
+/* ==========================================
+   5. BOTONES Y BUSCADOR DEL NAV
+========================================== */
+.nav-search {
+    display: flex;
+    flex: 1;
+    max-width: 350px;
+    margin: 0 20px;
+    background: rgba(128, 128, 128, 0.1);
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.nav-search input {
+    flex: 1; background: transparent; border: none; color: var(--text-light); padding: 10px 20px; outline: none;
+}
+
+.nav-search button {
+    background: transparent; color: var(--accent-gold); border: none; padding: 0 15px; cursor: pointer;
+}
+
+.nav-links { display: flex; align-items: center; gap: 20px; }
+.nav-links a { color: var(--text-light); text-decoration: none; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+.nav-links a:hover { color: var(--accent-gold); }
+
+#btnTheme {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+/**
+* Estilos base unificados para los botones de Login, Registro y Cerrar Sesión
+*/
+#btnLogin, .btn-login, #btnRegistro, .btn-register, #btnLogout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px; 
+    padding: 0 24px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Variante Ghost (Para el botón de Login) */
+#btnLogin, .btn-login {
+    background: transparent !important;
+    color: var(--text-light) !important;
+    border: 1px solid var(--text-light) !important;
+}
+
+#btnLogin:hover, .btn-login:hover {
+    border-color: var(--accent-gold) !important;
+    color: var(--accent-gold) !important;
+}
+
+/* Variante Sólida (Para el botón de Registro y Cerrar Sesión) */
+#btnRegistro, .btn-register, #btnLogout {
+    background: var(--color-1) !important; 
+    color: white !important;
+    border: none !important;
+}
+
+#btnRegistro:hover, .btn-register:hover, #btnLogout:hover { 
+    background: var(--color-2) !important; 
+} 
+
+/* ==========================================
+   6. HERO SECTION (IMAGEN DE FONDO COMPLETA Y LINTERNA)
+========================================== */
+/**
+*Implementa múltiples fondos apílados.
+*Capa 1: Un gradiente radial que reacciona a JS (--x, --y) para simular una linterna.
+*Capa 2: Una capa semitransparente (overlay) para asegurar legibilidad del texto.
+*Capa 3: La imagen de fondo principal (el burrito).
+*/
+.hero { 
+    padding: 150px 5% 100px; 
+    position: relative;
+    overflow: hidden;
+    
+    background-image: 
+        radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(212, 175, 55, 0.15) 0%, transparent 60%),
+        linear-gradient(var(--hero-overlay), var(--hero-overlay)),
+        var(--hero-bg-full);
+        
+    background-size: auto, cover, cover;
+    background-position: center, center, center;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px; 
+    margin: 0 auto;
+    position: relative; /* Asegura que el contenido esté por encima del fondo */
+}
+
+.hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 20px; 
+    color: var(--accent-gold); 
+    font-weight: 700; 
+    line-height: 1.1;
+}
+
+.hero p { 
+    color: var(--text-light); 
+    font-size: 1.2rem; 
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.search-bar {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1); 
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.search-bar input {
+    flex: 1; padding: 15px 25px; border: none; background: transparent; color: var(--text-light); font-size: 1rem; outline: none;
+}
+
+.search-bar button {
+    padding: 0 30px; background: var(--color-1); color: white; border: none; font-weight: 600; cursor: pointer; font-size: 1rem; transition: background 0.3s;
+}
+
+.search-bar button:hover {
+    background: var(--color-2);
+}
+
+/* ==========================================
+   7. GRID DE LIBROS Y TARJETAS
+========================================== */
+.container { padding: 50px 5%; max-width: 1400px; margin: 0 auto; }
+.section-title { margin-bottom: 30px; }
+.section-title h2 { font-size: 1.8rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+
+/**
+*Sistema de grilla automática. Este se ajusta dinámicamente al tamaño de pantalla
+*Sin necesidad de múltiples media queries gracias a auto-fit y minmax.
+*/
+.shelf { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 25px; 
+    width: 100%;
+}
+
+.book-card {
+    background: var(--bg-card); 
+    border: 1px solid var(--border-color);
+    border-radius: 12px; 
+    padding: 20px;
+    display: flex; 
+    gap: 15px;
+    align-items: center;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.book-card:hover { 
+    transform: translateY(-5px);  /* Efecto de elevación al hacer hover */
+    border-color: var(--color-2); 
+    box-shadow: 0 10px 20px rgba(128,0,64,0.2); 
+}
+
+.book-cover-img { width: 80px; height: 120px; object-fit: cover; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.book-info { flex: 1; display: flex; flex-direction: column; }
+.book-info h4 { font-size: 1.1rem; margin-bottom: 5px; color: var(--accent-gold); }
+.book-info span { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px; }
+.book-info p { font-size: 0.8rem; color: var(--text-light); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.book-info button {
+    background: var(--color-1); color: white; border: none; padding: 8px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-top: 10px;
+}
+
+/* ==========================================
+   8. PAGINACIÓN
+========================================== */
+.pagination, #pagination, .paginacion, #paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin: 50px auto 20px auto; 
+    text-align: center;
+}
+
+.pagination button, .pagination span, .pagination a, .pagination input,
+#paginacion button, #paginacion span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+    height: 40px;
+    background: var(--bg-main) !important; 
+    color: var(--accent-gold) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.pagination button:hover, .pagination a:hover, #paginacion button:hover {
+    background: var(--color-1) !important;
+    color: white !important;
+    border-color: var(--color-1) !important;
+}
+
+.pagination .active, .pagination button:disabled, .pagination span,
+#paginacion .active, #paginacion button:disabled, #paginacion span {
+    background: rgba(128,128,128,0.1) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   9. MODALES (REGISTRO, LOGIN Y LIBROS)
+========================================== */
+/**
+*Capa oscura que cubre toda la pantalla (Overlay).
+*Utiliza position: fixed y z-index alto para sobreponerse a todo el sitio
+*/
+.modal { 
+    display: none; 
+    position: fixed; 
+    z-index: 2000; 
+    left: 0; top: 0; width: 100vw; height: 100vh; 
+    background-color: rgba(15, 10, 15, 0.85); 
+    backdrop-filter: blur(8px); 
+    overflow: auto; 
+}
+
+.modal-content { 
+    background-color: var(--bg-card); 
+    padding: 45px; 
+    border: 1px solid var(--border-color); 
+    border-radius: 16px; 
+    width: 90%; max-width: 480px; 
+    margin: 10vh auto; 
+    position: relative; 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+
+.close { position: absolute; right: 25px; top: 20px; color: var(--text-muted); font-size: 30px; cursor: pointer; }
+.close:hover { color: var(--accent-gold); }
+
+#regForm input, #regForm select, #loginForm input { 
+    width: 100%; padding: 15px; margin: 10px 0; background: rgba(128, 128, 128, 0.1); 
+    border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-light); font-size: 1rem; 
+}
+
+#regForm button, #loginForm button {
+    width: 100%; background: var(--color-1); color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; font-weight: 600;
+}
+
+/* Ajustes específicos para el modal de vista de detalle del libro */
+.modal-extralarge { max-width: 950px !important; width: 95%; padding: 45px; }
+.open-library-layout { display: flex; gap: 50px; }
+.ol-left-col { width: 280px; display: flex; flex-direction: column; gap: 20px; }
+.ol-cover { width: 100%; height: 420px; object-fit: cover; border-radius: 8px; background: rgba(128,128,128,0.1); }
+.ol-btn { width: 100%; padding: 16px; background: var(--color-1); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.ol-right-col { flex: 1; display: flex; flex-direction: column; }
+.ol-right-col h2 { font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 15px;}
+.ol-author { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 20px; }
+
+/* ==========================================
+   10. PIE DE PÁGINA (COLUMNAS)
+========================================== */
+.site-footer { 
+    background-color: var(--bg-card); 
+    border-top: 1px solid var(--border-color); 
+    padding: 60px 5% 40px; 
+    margin-top: 80px; 
+}
+
+.footer-container { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start;
+    flex-wrap: wrap; 
+    gap: 40px; 
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left; 
+}
+
+.footer-col { display: flex; flex-direction: column; gap: 12px; min-width: 200px; flex: 1; }
+.footer-col h4 { color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.footer-col a, .footer-col p { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+.footer-col a:hover { color: var(--accent-gold); }
+
+.team-credits { width: 100%; text-align: center; border-top: 1px solid var(--border-color); margin-top: 40px; padding-top: 20px; }
+.team-credits p { color: var(--text-muted); font-size: 0.85rem; }
+
+/* ==========================================
+   11. RESPONSIVIDAD Y MENÚ HAMBURGUESA (MÓVILES)
+========================================== */
+/* Ocultamos la hamburguesa en PC */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hamburger span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--accent-gold);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Media Query: Aplica cuando la pantalla es menor a 900px (Tablets y Teléfonos)*/
+@media (max-width: 900px) {
+    /* Mostramos la hamburguesa */
+    .hamburger { display: flex; }
+
+    /* Ajustamos el buscador para que quepa junto a la hamburguesa */
+    .nav-search { max-width: 200px; margin: 0 10px; }
+
+    /* Ocultamos el menú a la derecha de la pantalla y preparamos el efecto cortina */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Menú escondido fuera de la pantalla */
+        width: 280px;
+        height: 100vh;
+        background: var(--bg-nav);
+        backdrop-filter: blur(15px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.4s ease;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+
+    /* Clase que Javascript agregará para mostrar el menú arrastrándolo a la vista */
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-links a { font-size: 1.2rem; margin: 10px 0; }
+    .header-buttons { flex-direction: column; gap: 15px; margin-top: 20px;}
+
+    /* Animación de la Hamburguesa transformándose en "X" al abrir el menú */
+    .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    /* Ajustes generales de la página para celulares y optimización de espacios */
+    .hero { padding: 120px 5% 60px; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero p { font-size: 1rem; }
+    
+    .footer-container { flex-direction: column; gap: 30px; text-align: center; }
+    .open-library-layout { flex-direction: column; align-items: center; }
+    .ol-left-col { width: 100%; max-width: 300px; }
+    .ol-right-col h2 { text-align: center; font-size: 2rem; }
+}
+
+/* Ajuste extra para celulares muy pequeños (menos de 480px) */
+@media (max-width: 480px) {
+    .nav-search { display: none; } /* Ocultamos buscador en nav muy pequeño para ganar espacio */
+    .hero h1 { font-size: 1.5rem; }
+    .book-card { flex-direction: column; text-align: center; }
+    .book-cover-img { margin: 0 auto; }
+}
